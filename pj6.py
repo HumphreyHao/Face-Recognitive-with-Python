@@ -20,7 +20,6 @@ img202 = np.array(img_202).flatten()
 neutral.append(img202)
 plt.imshow(img202.reshape(50,60),cmap='gray'); 
 plt.title('origin picture')
-#cut them into 190 train set and 10 test set
 #get the mean face and normalize
 faces = np.vstack(neutral)
 mean_face = np.mean(faces, axis=0)
@@ -37,12 +36,13 @@ def mse(imageA, imageB):
     return err
 
 fig, axs = plt.subplots(2,5,figsize=(15,6))
-for k, i in zip([0,1,9,19,39,79,159,199,399,799],np.arange(10)):
-    # Reconstruct the first picture '20b.jpg' whose index is 19.
-    weight = faces_norm[-1,:].dot(eigen_vecs[:,:k])
+index=-1
+for k, i in zip([0,4,9,29,49,69,99,139,159,189],np.arange(10)):
+    # Reconstruct the first picture '202a.jpg' whose index is -1.
+    weight = faces_norm[index,:].dot(eigen_vecs[:,:k])
     projected_face = weight.dot(eigen_vecs[:,:k].T) 
     ax = plt.subplot(2,5,i+1)
-    mse1=mse(projected_face.reshape(50,60),neutral[-1].reshape(50,60))
-    ax.set_title("mse is "+str(mse1))
+    mse1=mse(projected_face.reshape(50,60)+mean_face.reshape(50,60),neutral[index].reshape(50,60))
+    ax.set_title("K is "+ str(k)+ " mse is "+str(int(mse1)))
     plt.imshow(projected_face.reshape(50,60)+mean_face.reshape(50,60),cmap='gray');
 fig.suptitle(("Reconstruction with Increasing Eigenfaces"), fontsize=16);
